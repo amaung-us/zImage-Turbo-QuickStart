@@ -3,7 +3,9 @@
 [Back to index](index.md)
 
 
-# Folder Structure
+### Folder Structure
+Clone the repo and place the /srv folder and sub folders under correct location.
+
 ```
 /srv/
 ├── apps/
@@ -25,12 +27,23 @@
 
 ```
 
-# Download ZImage-Turbo GGUF Quantized
+run this via terminal to create folder structure listed above:
+```bash
+sudo mkdir -p /srv/{apps,models}
+sudo mkdir -p /srv/apps{zimage-turbo-web,zimage-turbo-webapi,zimage-turbo-local}
+sudo mkdir /srv/models/zImage-Turbo
+sudo mkdir -p ~/srv/models/zImage-Turbo{orig,gguf}
+sudo chown -R $USER:$USER /srv
+```
+
+### Download ZImage-Turbo GGUF Quantized
 
 
 Download Z-Image-Turbo from one of the followings
 <br>
 *(remember Z-Image-Turbo != Z-Image)*
+<br>
+HuggingFace CLI: hf download <repo_id> --local-dir <path_to_folder>
 
 ```
 [Original]
@@ -39,15 +52,16 @@ https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
 [GGUF Quantized]
 https://huggingface.co/jayn7/Z-Image-Turbo-GGUF
 
-
-
-hf download <repo_id> --local-dir <path_to_folder>
 ```
+**Clone this repo. All the files needed are in assets/srv folder.**
+
+
+
 ---
 
-# Local GGUF via Terminal
+### Running Local GGUF via Terminal
 
-Download [requirements.txt](assets/zit-gguf/requirements.txt) and [zit-gguf-t2i.py](assets/zit-gguf/zit-gguf-t2i.py) and place them in the */srv/apps/zimage-turbo-local* (or wherever you want this python script to exist).
+
 
 run the following commands:
 
@@ -71,15 +85,10 @@ test by running
 python3 zit-gguf-t2i.py
 ```
 ---
- # Local GGUF via Web Interface
 
- Download:
-  - [requirements.txt](assets/zit-gguf-web/requirements.txt) 
-  - [app.py](assets/zit-gguf-web/app.py) 
-  - [index.html](assets/zit-gguf-web/templates/index.html)
+ ### Local GGUF via Web Interface
 
-  put them in the correct folder as shown above.
-
+ 
  run the following commands:
  ```bash
 cd /srv/apps/zimage-turbo-web
@@ -143,16 +152,10 @@ sudo systemctl status zimage-web
 ```
 
 ---
-# Fully Integrated Solution
+## Integrated Solution
 
+### All in one - Web + API for Open WebUI (OpenAI Compatible)
 Becareful  what you wish for. This solution will push memory to it's limits with 12GB vRAM
-
- Download:
-  - [requirements.txt](assets/zit-gguf-webapi/requirements.txt) 
-  - [app.py](assets/zit-gguf-webapi/app.py) 
-  - [index.html](assets/zit-gguf-webapi/templates/index.html)
-
-  put them in the correct folder as shown above.
 
  run the following commands:
  ```bash

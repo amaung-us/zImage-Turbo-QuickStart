@@ -28,12 +28,24 @@ Clone the repo and place the /srv folder and sub folders under correct location.
 ```
 
 run this via terminal to create folder structure listed above:
+<br>
+**[LINUX ONLY]**
 ```bash
 sudo mkdir -p /srv/{apps,models}
 sudo mkdir -p /srv/apps{zimage-turbo-web,zimage-turbo-webapi,zimage-turbo-local}
 sudo mkdir /srv/models/zImage-Turbo
-sudo mkdir -p ~/srv/models/zImage-Turbo{orig,gguf}
+sudo mkdir -p /srv/models/zImage-Turbo{orig,gguf}
 sudo chown -R $USER:$USER /srv
+```
+<br>
+**[MacOS ONLY]**
+
+```bash
+sudo mkdir -p ~/~srv/{apps,models}
+sudo mkdir -p ~/srv/apps{zimage-turbo-web,zimage-turbo-webapi,zimage-turbo-local}
+sudo mkdir ~/srv/models/zImage-Turbo
+sudo mkdir -p ~/srv/models/zImage-Turbo{orig,gguf}
+sudo chown -R $USER:$USER ~/srv
 ```
 
 ### Download ZImage-Turbo GGUF Quantized

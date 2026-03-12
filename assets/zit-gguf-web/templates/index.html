@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Z-Image Turbo Web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #111;
+      color: #eee;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+    .panel, .viewer {
+      background: #1b1b1b;
+      border-radius: 12px;
+      padding: 18px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #222;
+      color: #fff;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    button {
+      cursor: pointer;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    .secondary {
+      background: #2e2e2e;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #bbb;
+      min-height: 18px;
+    }
+    #imageBox {
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #444;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+    #resultImage {
+      max-width: 100%;
+      max-height: 80vh;
+      display: none;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>Z-Image Turbo Web</h1>
+    <div>Device: {{ device }} | Dtype: {{ dtype }}</div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <form id="genForm">
+        <label for="model_filename">GGUF model</label>
+        <select id="model_filename" name="model_filename">
+          {% for model in models %}
+            <option value="{{ model }}" {% if model == default_model %}selected{% endif %}>{{ model }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="prompt">Prompt</label>
+        <textarea id="prompt" name="prompt">A cinematic portrait of a woman sitting at a table in restaurant at night</textarea>
+
+        <div class="row">
+          <div>
+            <label for="width">Width</label>
+            <input id="width" name="width" type="number" value="512" step="8" min="256" max="2048" />
+          </div>
+          <div>
+            <label for="height">Height</label>
+            <input id="height" name="height" type="number" value="512" step="8" min="256" max="2048" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="seed">Seed</label>
+            <input id="seed" name="seed" type="number" value="42" />
+          </div>
+          <div>
+            <label for="passes">Passes</label>
+            <input id="passes" name="passes" type="number" value="9" min="1" max="50" />
+          </div>
+        </div>
+
+        <button type="submit">Generate</button>
+        <button type="button" class="secondary" id="randomSeedBtn">Randomize Seed</button>
+        <div id="status"></div>
+      </form>
+    </div>
+
+    <div class="viewer">
+      <div id="imageBox">
+        <img id="resultImage" alt="Generated image" />
+        <div id="placeholder">Generated image will appear here</div>
+      </div>
+      <button type="button" class="secondary" id="saveBtn" style="margin-top:16px;" disabled>Save Image</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("genForm");
+    const statusEl = document.getElementById("status");
+    const resultImage = document.getElementById("resultImage");
+    const saveBtn = document.getElementById("saveBtn");
+    const placeholder = document.getElementById("placeholder");
+    const randomSeedBtn = document.getElementById("randomSeedBtn");
+    const seedInput = document.getElementById("seed");
+
+    let lastImageBlob = null;
+    let lastImageUrl = null;
+
+    randomSeedBtn.addEventListener("click", () => {
+      seedInput.value = Math.floor(Math.random() * 2147483647);
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      statusEl.textContent = "Generating...";
+      saveBtn.disabled = true;
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("/generate", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let detail = "Unknown error";
+          try {
+            const err = await response.json();
+            detail = err.detail || detail;
+          } catch (_) {}
+          throw new Error(detail);
+        }
+
+        const blob = await response.blob();
+
+        if (lastImageUrl) {
+          URL.revokeObjectURL(lastImageUrl);
+        }
+
+        lastImageBlob = blob;
+        lastImageUrl = URL.createObjectURL(blob);
+        resultImage.src = lastImageUrl;
+        resultImage.style.display = "block";
+        placeholder.style.display = "none";
+        saveBtn.disabled = false;
+        statusEl.textContent = "Done.";
+      } catch (err) {
+        statusEl.textContent = "Error: " + err.message;
+      }
+    });
+
+    saveBtn.addEventListener("click", () => {
+      if (!lastImageBlob) return;
+
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(lastImageBlob);
+      a.download = "generated.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+diffusers==0.37.0
+transformers>=4.41.0
+accelerate==1.13.0
+gguf>=0.10.0
+huggingface_hub>=0.23.0
+safetensors>=0.4.3
+pillow>=10.0.0
+tqdm>=4.66
+numpy>=1.26
+psutil>=5.9
+rich>=13.7

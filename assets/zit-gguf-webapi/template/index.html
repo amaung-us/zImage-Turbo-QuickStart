@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ZImage Turbo Web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1e232d;
+      --border: #2d3442;
+      --text: #e8ecf3;
+      --muted: #aab4c3;
+      --accent: #6ea8fe;
+      --accent-hover: #8ab8ff;
+      --success: #7bd88f;
+      --error: #ff8b8b;
+      --shadow: 0 10px 30px rgba(0,0,0,0.28);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #0c0f14 0%, #11151c 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .title-wrap h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+    }
+
+    .panel,
+    .viewer {
+      background: rgba(23, 26, 33, 0.96);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .viewer {
+      padding: 18px;
+      min-height: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 14px 0;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    textarea,
+    input,
+    select,
+    button {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea,
+    input,
+    select {
+      padding: 12px 13px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(110, 168, 254, 0.12);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #08101e;
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    button.secondary:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 14px;
+      min-height: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status.success { color: var(--success); }
+    .status.error { color: var(--error); }
+
+    .helper {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .viewer-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .viewer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .canvas {
+      flex: 1;
+      min-height: 620px;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005)),
+        #0b0d12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .placeholder {
+      text-align: center;
+      color: var(--muted);
+      max-width: 520px;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .placeholder strong {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    #resultImage {
+      max-width: 100%;
+      max-height: 78vh;
+      display: none;
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 14px;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.18);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .row-2,
+      .row-3,
+      .btn-row,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="title-wrap">
+        <h1>ZImage Turbo Web</h1>
+        <div class="subtitle">Local GGUF image generation with browser UI and OpenAI-compatible API.</div>
+      </div>
+
+      <div class="meta">
+        <div class="pill">Device: {{ device }}</div>
+        <div class="pill">Dtype: {{ dtype }}</div>
+        <div class="pill">Models found: {{ models|length }}</div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2 class="section-title">Generate Image</h2>
+
+        <form id="genForm">
+            <label for="model">GGUF model</label>
+            <select id="model" name="model" required>
+              {% for m in models %}
+                <option value="{{ m }}">{{ m }}</option>
+              {% endfor %}
+            </select>
+
+          <label for="prompt">Prompt</label>
+          <textarea id="prompt" name="prompt" placeholder="Describe the image you want to generate..." required>A cinematic portrait of a woman sitting at a table in a softly lit restaurant at night</textarea>
+
+          <div class="row-2">
+            <div>
+              <label for="width">Width</label>
+              <input id="width" name="width" type="number" min="256" max="2048" step="8" value="{{ default_width }}" required />
+            </div>
+            <div>
+              <label for="height">Height</label>
+              <input id="height" name="height" type="number" min="256" max="2048" step="8" value="{{ default_height }}" required />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label for="seed">Seed</label>
+              <input id="seed" name="seed" type="number" value="{{ default_seed }}" required />
+            </div>
+            <div>
+              <label for="passes">Passes / Steps</label>
+              <input id="passes" name="passes" type="number" min="1" max="50" value="{{ default_steps }}" required />
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="primary" type="submit" id="generateBtn">Generate</button>
+            <button class="secondary" type="button" id="randomSeedBtn">Randomize Seed</button>
+          </div>
+
+          <div id="status" class="status"></div>
+
+          <div class="helper">
+            <div><strong>Model directory:</strong> <span id="modelDir">{{ model_dir }}</span></div>
+            <div style="margin-top:6px;">
+              Generated images are kept in browser memory only. Use <strong>Save Image</strong> if you want to keep the current result.
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="viewer">
+        <div class="viewer-top">
+          <h2 class="section-title" style="margin:0;">Preview</h2>
+          <div class="viewer-actions">
+            <button class="secondary" type="button" id="saveBtn" disabled>Save Image</button>
+            <button class="secondary" type="button" id="clearBtn">Clear</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Model</div>
+            <div class="stat-value" id="statModel">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Size</div>
+            <div class="stat-value" id="statSize">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Seed</div>
+            <div class="stat-value" id="statSeed">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Time</div>
+            <div class="stat-value" id="statTime">—</div>
+          </div>
+        </div>
+
+        <div class="canvas" id="imageBox">
+          <div class="placeholder" id="placeholder">
+            <strong>No image generated yet</strong>
+            Enter a prompt, choose a model, and click Generate.
+          </div>
+          <img id="resultImage" alt="Generated image" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const form = document.getElementById("genForm");
+  const generateBtn = document.getElementById("generateBtn");
+  const randomSeedBtn = document.getElementById("randomSeedBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const clearBtn = document.getElementById("clearBtn");
+
+  const statusEl = document.getElementById("status");
+  const resultImage = document.getElementById("resultImage");
+  const placeholder = document.getElementById("placeholder");
+
+  const modelInput = document.getElementById("model");
+  const widthInput = document.getElementById("width");
+  const heightInput = document.getElementById("height");
+  const seedInput = document.getElementById("seed");
+  const passesInput = document.getElementById("passes");
+
+  const statModel = document.getElementById("statModel");
+  const statSize = document.getElementById("statSize");
+  const statSeed = document.getElementById("statSeed");
+  const statTime = document.getElementById("statTime");
+
+  let lastImageBlob = null;
+  let lastImageUrl = null;
+
+  function setStatus(message, type = "") {
+    statusEl.className = "status";
+    if (type) statusEl.classList.add(type);
+    statusEl.innerHTML = message;
+  }
+
+  function setLoading(isLoading) {
+    generateBtn.disabled = isLoading;
+    randomSeedBtn.disabled = isLoading;
+
+    if (isLoading) {
+      setStatus('<span class="loading"><span class="spinner"></span>Generating image...</span>');
+    }
+  }
+
+  function randomSeed() {
+    const seed = Math.floor(Math.random() * 2147483647);
+    seedInput.value = seed;
+  }
+
+  function clearImage() {
+    if (lastImageUrl) {
+      URL.revokeObjectURL(lastImageUrl);
+      lastImageUrl = null;
+    }
+
+    lastImageBlob = null;
+    resultImage.removeAttribute("src");
+    resultImage.style.display = "none";
+    placeholder.style.display = "block";
+    saveBtn.disabled = true;
+
+    statModel.textContent = "—";
+    statSize.textContent = "—";
+    statSeed.textContent = "—";
+    statTime.textContent = "—";
+    setStatus("");
+  }
+
+  function downloadCurrentImage() {
+    if (!lastImageBlob) return;
+
+    const downloadUrl = URL.createObjectURL(lastImageBlob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = "generated.png";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(downloadUrl);
+  }
+
+  randomSeedBtn.addEventListener("click", randomSeed);
+  saveBtn.addEventListener("click", downloadCurrentImage);
+  clearBtn.addEventListener("click", clearImage);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const model = modelInput.value;
+    const width = widthInput.value;
+    const height = heightInput.value;
+    const seed = seedInput.value;
+    const passes = passesInput.value;
+    const prompt = document.getElementById("prompt").value;
+
+    if (!model) {
+      setStatus("Error: no model selected.", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.set("model", model);
+    formData.set("prompt", prompt);
+    formData.set("width", width);
+    formData.set("height", height);
+    formData.set("seed", seed);
+    formData.set("passes", passes);
+
+    const startedAt = performance.now();
+    setLoading(true);
+
+    try {
+      const response = await fetch("/generate", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let message = `HTTP ${response.status}`;
+        try {
+          const err = await response.json();
+          if (err.detail) {
+            message = typeof err.detail === "string"
+              ? err.detail
+              : JSON.stringify(err.detail);
+          }
+        } catch (_) {}
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+
+      if (lastImageUrl) {
+        URL.revokeObjectURL(lastImageUrl);
+      }
+
+      lastImageBlob = blob;
+      lastImageUrl = URL.createObjectURL(blob);
+
+      resultImage.src = lastImageUrl;
+      resultImage.style.display = "block";
+      placeholder.style.display = "none";
+      saveBtn.disabled = false;
+
+      const elapsed = ((performance.now() - startedAt) / 1000).toFixed(2);
+
+      statModel.textContent = model || "—";
+      statSize.textContent = `${width} × ${height}`;
+      statSeed.textContent = seed || "—";
+      statTime.textContent = `${elapsed}s`;
+
+      setStatus("Image generated successfully.", "success");
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  });
+</script>
+</body>
+</html>

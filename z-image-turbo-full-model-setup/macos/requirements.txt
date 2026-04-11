@@ -1,0 +1,19 @@
+# Core ML
+torch>=2.2.0
+# diffusers must be installed from source for ZImagePipeline support:
+#   pip install git+https://github.com/huggingface/diffusers
+transformers>=4.51.0
+accelerate>=0.30.0
+sentencepiece
+tokenizers
+
+# Image handling
+Pillow>=10.0.0
+
+# Web server
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Utilities
+numpy
+tqdm

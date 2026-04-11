@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r /Users/lmaung/Repos/Claude/z-image-turbo/macos/templates /Users/lmaung/Repos/Claude/z-image-turbo/cuda/)",
+      "Bash(cp -r /Users/lmaung/Repos/Claude/z-image-turbo/macos/static /Users/lmaung/Repos/Claude/z-image-turbo/cuda/)",
+      "Bash(cp /Users/lmaung/Repos/Claude/z-image-turbo/macos/src/__init__.py /tmp/__init__.py)",
+      "Bash(mkdir -p /Users/lmaung/Repos/Claude/z-image-turbo/cuda/src)",
+      "Bash(mkdir -p /Users/lmaung/Repos/Claude/z-image-turbo/cuda/outputs)",
+      "Bash(chmod +x /Users/lmaung/Repos/Claude/z-image-turbo/cuda/setup.sh /Users/lmaung/Repos/Claude/z-image-turbo/cuda/serve /Users/lmaung/Repos/Claude/z-image-turbo/cuda/zImageTurbo)"
+    ]
+  }
+}

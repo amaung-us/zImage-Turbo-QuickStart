@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# serve – activate venv and start the Z-Image-Turbo web/API server
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_DIR="$SCRIPT_DIR/.venv"
+
+if [ ! -d "$VENV_DIR" ]; then
+    echo "[ERROR] Virtual environment not found. Run ./setup.sh first."
+    exit 1
+fi
+
+source "$VENV_DIR/bin/activate"
+cd "$SCRIPT_DIR"
+python src/server.py "$@"

@@ -1,0 +1,24 @@
+# Core ML
+# torch and torchvision must be installed via setup.sh (CUDA 13.0 wheels):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+torch>=2.11.0
+# diffusers must be installed from source for ZImagePipeline support:
+#   pip install git+https://github.com/huggingface/diffusers
+transformers>=4.51.0
+accelerate>=0.30.0
+sentencepiece
+tokenizers
+
+# Optional: memory-efficient attention (recommended for NVIDIA GPUs)
+# xformers>=0.0.26
+
+# Image handling
+Pillow>=10.0.0
+
+# Web server
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Utilities
+numpy
+tqdm

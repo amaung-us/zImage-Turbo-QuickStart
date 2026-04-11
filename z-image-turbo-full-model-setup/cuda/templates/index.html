@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Z-Image Turbo</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <!-- Sidebar / Controls -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">&#9889;</div>
+        <div class="brand-text">
+          <span class="brand-name">Z-Image</span>
+          <span class="brand-tag">Turbo</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="prompt">Prompt</label>
+        <textarea id="prompt" rows="5" placeholder="Describe the image you want to create..."></textarea>
+      </div>
+
+      <div class="control-row">
+        <div class="control-group half">
+          <label for="width">Width</label>
+          <select id="width">
+            <option value="512">512</option>
+            <option value="768">768</option>
+            <option value="1024" selected>1024</option>
+            <option value="1088">1088</option>
+            <option value="1280">1280</option>
+            <option value="1536">1536</option>
+            <option value="1920">1920</option>
+          </select>
+        </div>
+        <div class="control-group half">
+          <label for="height">Height</label>
+          <select id="height">
+            <option value="512">512</option>
+            <option value="768">768</option>
+            <option value="1024" selected>1024</option>
+            <option value="1088">1088</option>
+            <option value="1280">1280</option>
+            <option value="1536">1536</option>
+            <option value="1920">1920</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control-group half">
+          <label for="steps">Steps</label>
+          <input id="steps" type="number" min="1" max="50" value="9" />
+        </div>
+        <div class="control-group half">
+          <label for="seed">Seed <span class="hint">(-1 random)</span></label>
+          <input id="seed" type="number" value="-1" />
+        </div>
+      </div>
+
+      <button id="generate-btn" class="generate-btn" onclick="generateImage()">
+        <span id="btn-text">Generate</span>
+        <span id="btn-spinner" class="spinner hidden"></span>
+      </button>
+
+      <div id="error-msg" class="error-msg hidden"></div>
+      <div id="status-msg" class="status-msg hidden"></div>
+    </aside>
+
+    <!-- Main canvas -->
+    <main class="canvas">
+      <div id="gallery" class="gallery">
+        <div class="placeholder">
+          <div class="placeholder-icon">&#9889;</div>
+          <p>Your generated images will appear here.</p>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
